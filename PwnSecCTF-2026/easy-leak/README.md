@@ -1,4 +1,4 @@
-# pure-leak
+# easy-leak
 
 # Solution 
 
