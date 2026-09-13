@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bot</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at top, rgba(210, 222, 198, 0.6), transparent 36%),
+          linear-gradient(180deg, #f4efe5 0%, #e6ded0 100%);
+        color: #1f1c16;
+      }
+      main {
+        width: min(560px, calc(100vw - 32px));
+        border: 1px solid #c8bca8;
+        border-radius: 10px;
+        background: rgba(255, 252, 245, 0.96);
+        padding: 24px;
+        box-shadow: 0 14px 40px rgba(46, 34, 18, 0.12);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 29px;
+        line-height: 1.1;
+      }
+      p {
+        margin: 0 0 16px;
+        line-height: 1.5;
+      }
+      form {
+        display: grid;
+        gap: 12px;
+      }
+      label {
+        font-weight: 700;
+      }
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #bcae95;
+        border-radius: 8px;
+        font: inherit;
+        background: #fff;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        background: #245946;
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+      .meta {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid #ddd2bf;
+        color: #5a5145;
+      }
+      .status {
+        min-height: 1.4em;
+        margin-top: 6px;
+        font-weight: 600;
+      }
+      code {
+        font-family: ui-monospace, monospace;
+        font-size: 0.95em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Bot</h1>
+      <p>Submit a URL</p>
+      <form id="report-form" method="post" action="/visit">
+        <div>
+          <label for="url">URL</label>
+        </div>
+        <input id="url" name="url" type="url" placeholder="https://example.com/" required>
+        <button id="submit" type="submit">Send To Bot</button>
+      </form>
+      <div class="status" id="status"></div>
+      <div class="meta">
+        <p>Challenge origin: <code><%= appOrigin %></code></p>
+      </div>
+    </main>
+    <script>
+      const form = document.getElementById("report-form");
+      const status = document.getElementById("status");
+      const submit = document.getElementById("submit");
+      const url = document.getElementById("url");
+
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        status.textContent = "";
+        submit.disabled = true;
+
+        try {
+          const response = await fetch("/visit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: url.value })
+          });
+          const contentType = response.headers.get("content-type") || "";
+          const payload = contentType.includes("application/json")
+            ? await response.json()
+            : { message: await response.text() };
+          status.textContent = response.ok ? payload.message : (payload.error || payload.message || "request failed");
+        } catch {
+          status.textContent = "request failed";
+        } finally {
+          submit.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

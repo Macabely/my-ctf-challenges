@@ -1,0 +1,18 @@
+services:
+  web:
+    build: ./app
+    ports:
+      - "3000:3000"
+    environment:
+      FLAG: "FLAG{fresh_realm_browser}"
+      SESSION_SECRET: "fresh-realm-session-secret"
+      BOT_SESSION_ID: "fresh-realm-bot-session"
+      BOT_TOKEN: "fresh-realm-bot-token"
+
+  bot:
+    build: ./bot
+    ports:
+      - "3001:3001"
+    environment:
+      APP_ORIGIN: "http://web:3000"
+      BOT_TOKEN: "fresh-realm-bot-token"
