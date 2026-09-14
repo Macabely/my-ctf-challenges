@@ -18,7 +18,7 @@ caddy forwards them across the four PHP upstreams. A PHP process must finish its
 ```js
 const s = performance.now();
   for (let i = 0; i < 14; i++) {
-    await fetch(APP + "/?q=" + id + i + Math.random(),
+    await fetch(APP + "/?q=" + i,
                 { mode: "no-cors", cache: "no-store" });
   }
   return performance.now() - s;
