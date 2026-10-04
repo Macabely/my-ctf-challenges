@@ -1,0 +1,18 @@
+name: Ibrahim's tea
+
+services:
+  web:
+    build: ./web
+    ports:
+      - "3000:3000"
+
+  bot:
+    build: ./bot
+    ports:
+      - "3001:3001"
+    environment:
+      APP_ORIGIN: http://web:3000
+      FLAG: flag{test_flag}
+    depends_on:
+      - web
+    init: true
